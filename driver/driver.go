@@ -11,13 +11,13 @@ import(
 )
 
 func Connect() (*mongo.Database, error) {
-  // dbURI := os.Getenv("DB_URI")
+
   err := godotenv.Load()
   if err != nil {
     log.Fatal("Error loading .env file")
   }
   dbURI:=os.Getenv("DB_URI")
-  // clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
+
   clientOptions := options.Client().ApplyURI(dbURI)
   client, err := mongo.NewClient(clientOptions)
 
@@ -31,5 +31,5 @@ func Connect() (*mongo.Database, error) {
     }
   dbName:=os.Getenv("DB_NAME")
   return client.Database(dbName), nil
-  // return client.Database("cobagolang"), nil
+
 }

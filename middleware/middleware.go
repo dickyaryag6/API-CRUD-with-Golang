@@ -9,15 +9,22 @@ import (
   "strings"
   "context"
   "os"
+  "github.com/joho/godotenv"
+  "log"
 )
 
-var APPLICATION_NAME = os.Getenv("APPLICATION_NAME")
 var LOGIN_EXP_DURATION = time.Duration(1) * time.Hour
 var JWT_SIGNING_METHOD = jwt.SigningMethodHS256
-var JWT_SIGNATURE_KEY = []byte(os.Getenv("SIGNATURE_KEY"))
+
 
 func MiddlewareJWTAuthorization(next http.Handler) http.Handler {
   return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+    err := godotenv.Load()
+    if err != nil {
+      log.Fatal("Error loading .env file")
+    }
+    jwtSignKey:=os.Getenv("JWT_SIGNATURE_KEY")
     //
     // url:=r.URL.Path
     // if itemExists(noAuthSlice, url){
@@ -51,7 +58,7 @@ func MiddlewareJWTAuthorization(next http.Handler) http.Handler {
             return nil, Errorf("Signing method invalid")
         }
 
-        return JWT_SIGNATURE_KEY, nil
+        return []byte(jwtSignKey), nil
     })
 
     if err != nil {
